@@ -6,7 +6,7 @@ import sys
 import re
 from datetime import datetime as dt
 from dotenv import load_dotenv # .envファイルから環境変数をロードするためのライブラリをインポート
-from pprint import pprint
+
 
 
 
@@ -20,7 +20,7 @@ def main():
     version = os.getenv('VERSION')
     ig_user_id = os.getenv('IG_USER_ID')
     # 情報を取得したいユーザーID
-    user_id = 'mr.cheesecake.tokyo'
+    user_id = 'yuta.tamamori_j'
 
 
     today = dt.now().strftime('%Y-%m-%d')
@@ -48,8 +48,8 @@ def main():
     dfp = dfp.loc[:,~dfp.columns.duplicated()]
 
     # プロフィール情報のデータフレームcsv作成
-    my_makedirs('./result')
-    dfp.to_csv(f'./result/{user_id}-profile-{today}.csv')
+    my_makedirs(f'./result/{user_id}')
+    dfp.to_csv(f'./result/{user_id}/{user_id}-profile-{today}.csv')
 
     # メディア情報の取り出し
     # media_data の中に投稿の一個一個がリストの形式で入っている
@@ -75,16 +75,16 @@ def main():
         # インデックスを振りなおす（結合するとインデックスがバラバラになるため）
         df.reset_index(inplace=True, drop=True)
         # 結果csv保存用のディレクトリ作成
-        my_makedirs('./result')
+        my_makedirs(f'./result/{user_id}')
         # 投稿情報のデータフレームcsv作成
-        df.to_csv(f'./result/{user_id}-{today}.csv')
+        df.to_csv(f'./result/{user_id}/{user_id}-{today}.csv')
 
     # after_keyがない場合 そのままデータフレームを作成
     else:
         print('after_keyがありませんでした｡')
         df = make_data_df(media_data, data_dict)
-        my_makedirs('./result')
-        df.to_csv(f'./result/{user_id}-{today}.csv')
+        my_makedirs(f'./result/{user_id}')
+        df.to_csv(f'./result/{user_id}/{user_id}-{today}.csv')
 
 
 
@@ -93,6 +93,7 @@ def my_makedirs(path):
     # ディレクトリがなければ､ディレクトリを作るという処理
     if not os.path.isdir(path):
         os.makedirs(path)
+
 
 
 
@@ -181,10 +182,10 @@ def make_data_df(media_data, data_dict):
         # キーがない場合の場合の処理を記述
         except KeyError as e:
             print('KeyError', e, 'というKeyが存在しません｡')
-            media_url = media_data[i]['media_url']
-            caption = ''
+            media_url = ''
+            caption = media_data[i]['caption']
             hash_tags = ''
-            timestamp = media_data[i]['time_stamp'].replace('+0000', '').replace('T', ' ')
+            timestamp = media_data[i]['timestamp']
             like_count = media_data[i]['like_count']
             comments_count = media_data[i]['comments_count']
 
